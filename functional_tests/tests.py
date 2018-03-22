@@ -1,6 +1,7 @@
 from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+import time
 
 class NewVisitorTest(LiveServerTestCase):
 	
@@ -37,7 +38,7 @@ class NewVisitorTest(LiveServerTestCase):
 		#她按回车键后，页面更新了
 		#待办事项表格中显示了“1：Buy peacock feathers”
 		inputbox.send_keys(Keys.ENTER)
-		import time
+		
 		time.sleep(10)
 		edith_list_url = self.browser.current_url
 		self.assertRegex(edith_list_url, '/lists/.+')
@@ -86,4 +87,17 @@ class NewVisitorTest(LiveServerTestCase):
 		self.assertIn('Buy milk', page_text)
 		
 		#两人都很满意，去睡觉了
+		
+	def test_layout_and_styling(self):
+		self.browser.get(self.live_server_url)
+		self.browser.set_window_size(1030, 768)
+		
+		inputbox = self.browser.find_element_by_id('id_new_item')
+		self.assertAlmostEqual(inputbox.location['x'] + inputbox.size['width'] / 2, 512, delta=5)
+		
+		inputbox.send_keys('testing\n')
+		inputbox.send_keys(Keys.ENTER)
+		time.sleep(10)
+		inputbox = self.browser.find_element_by_id('id_new_item')
+		self.assertAlmostEqual(inputbox.location['x'] + inputbox.size['width'] / 2, 512, delta=5)
 
